@@ -4,7 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
-.header-tab{
+body {
+    @apply text-white
+}
+
+.header-tab {
     @apply mr-2 hover:underline
 }
 
@@ -12,6 +16,10 @@
     @apply w-full h-screen
 }
 
-.map-sidebar {
-    @apply absolute z-10 bg-cyan-950/90 text-white rounded px-3 py-2 m-3
+.nine-logo {
+    @apply absolute z-10 top-5 left-12 h-5
+}
+
+.base-text {
+    @apply text-white text-sm
 }

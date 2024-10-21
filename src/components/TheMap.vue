@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import mapboxgl from 'mapbox-gl';
-import { type MapLocation } from '@/assets/types';
+import { type MapLocation } from '@/utils/types';
 import '../../node_modules/mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken =
@@ -31,8 +31,6 @@ function getLocation() {
 function updateLocation() {
   location.value = getLocation();
 }
-
-function addPoi() {}
 
 onMounted(() => {
   map.value = new mapboxgl.Map({
@@ -66,27 +64,12 @@ watch(location, (newVal) => {
 </script>
 
 <template>
-  <div>
-    <div id="sidebar" class="map-sidebar">
-      Longitude: {{ location.lng.toFixed(4) }} | Latitude:
-      {{ location.lat.toFixed(4) }} | Zoom: {{ location.zoom.toFixed(2) }} |
-      <template v-if="location.bearing">
-        Bearing: {{ location.bearing.toFixed(2) }} |
-      </template>
-      <template v-if="location.pitch">
-        Pitch: {{ location.pitch.toFixed(2) }} |
-      </template>
-      <button @click="location = defaultLocation">Reset</button>
-      <button @click="addPoi">Reset</button>
-    </div>
+  <div class="base-text">
+    <img
+      src="../assets/Nine-Logo-Hvidt.png"
+      alt="Nine logo"
+      class="nine-logo"
+    />
     <div ref="map-container" class="nine-map" />
   </div>
 </template>
-
-<style>
-#sidebar {
-  font-family: monospace;
-  top: 20;
-  left: 0;
-}
-</style>
