@@ -3,3 +3,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.header-tab{
+    @apply mr-2 hover:underline
+}
+
+.nine-map {
+    @apply w-full h-screen
+}
+
+.map-sidebar {
+    @apply absolute z-10 bg-cyan-950/90 text-white rounded px-3 py-2 m-3
+}
