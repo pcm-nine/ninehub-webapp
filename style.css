@@ -20,6 +20,10 @@ body {
     @apply absolute z-10 top-5 left-12 h-5
 }
 
+.search-bar {
+    @apply absolute z-10 top-3 rounded-lg h-8 w-52 text-black px-2
+}
+
 .base-text {
     @apply text-white text-sm
 }

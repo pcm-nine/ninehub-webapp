@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, watch } from "vue";
-import mapboxgl, { Map, MapMouseEvent, type GeoJSONFeature } from "mapbox-gl";
-import { type MapLocation } from "@/utils/types";
+import { onMounted, ref, useTemplateRef, watch } from 'vue';
+import mapboxgl, { Map, MapMouseEvent, type GeoJSONFeature } from 'mapbox-gl';
+import { type MapLocation } from '@/utils/types';
 
 mapboxgl.accessToken =
-  "pk.eyJ1IjoianN6LW5pbmUiLCJhIjoiY20yZWc4MGNvMWg1dDJrcXc2cW5jM2diYSJ9.UoEyXwUOhg9MIxXqYTod-A";
+  'pk.eyJ1IjoianN6LW5pbmUiLCJhIjoiY20yZWc4MGNvMWg1dDJrcXc2cW5jM2diYSJ9.UoEyXwUOhg9MIxXqYTod-A';
 
-const mapStyle: string = "mapbox://styles/jsz-nine/cm2ek9r24004h01pgfiltcedg";
+const mapStyle: string = 'mapbox://styles/jsz-nine/cm2ek9r24004h01pgfiltcedg';
 
 const defaultLocation: MapLocation = {
   lng: 12.585646,
@@ -16,7 +16,7 @@ const defaultLocation: MapLocation = {
   zoom: 12,
 };
 
-const mapContainer = useTemplateRef("map-container");
+const mapContainer = useTemplateRef('map-container');
 const location = ref<MapLocation>(defaultLocation);
 const map = ref<Map | undefined>();
 
@@ -49,17 +49,17 @@ function updateLocation(): void {
   }
 }
 
-map.value?.on("move", updateLocation);
-map.value?.on("zoom", updateLocation);
-map.value?.on("rotate", updateLocation);
-map.value?.on("pitch", updateLocation);
+map.value?.on('move', updateLocation);
+map.value?.on('zoom', updateLocation);
+map.value?.on('rotate', updateLocation);
+map.value?.on('pitch', updateLocation);
 
-map.value?.on("click", (event: MapMouseEvent) => {
+map.value?.on('click', (event: MapMouseEvent) => {
   console.log(event.point);
   // If the user clicked on one of your markers, get its information.
   const features: GeoJSONFeature[] =
     map.value?.queryRenderedFeatures(event.point, {
-      layers: ["YOUR_LAYER_NAME"], // replace with your layer name
+      layers: ['YOUR_LAYER_NAME'], // replace with your layer name
     }) ?? [];
   if (!features.length) {
     return;
@@ -70,7 +70,7 @@ map.value?.on("click", (event: MapMouseEvent) => {
     const popup = new mapboxgl.Popup({ offset: [0, -15] })
       .setLngLat(feature.geometry?.coordinates)
       .setHTML(
-        `<h3>${feature.properties?.title}</h3><p>${feature.properties?.description}</p>`,
+        `<h3>${feature.properties?.title}</h3><p>${feature.properties?.description}</p>`
       )
       .addTo(map.value);
     console.log(popup);
@@ -94,6 +94,7 @@ watch(location, (newVal) => {
       alt="Nine logo"
       class="nine-logo"
     />
+    <input type="text" class="search-bar" placeholder="Søg" />
     <div ref="map-container" class="nine-map" />
   </div>
 </template>
