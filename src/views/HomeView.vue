@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TheMap from '@/components/TheMap.vue';
+import TheMap from "@/components/TheMap.vue";
 </script>
 
 <template>

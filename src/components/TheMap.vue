@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, watch } from 'vue';
-import mapboxgl, { Map } from 'mapbox-gl';
-import { type MapLocation } from '@/utils/types';
+import { onMounted, ref, useTemplateRef, watch } from "vue";
+import mapboxgl, { Map, MapMouseEvent, type GeoJSONFeature } from "mapbox-gl";
+import { type MapLocation } from "@/utils/types";
 
 mapboxgl.accessToken =
-  'pk.eyJ1IjoianN6LW5pbmUiLCJhIjoiY20yZWc4MGNvMWg1dDJrcXc2cW5jM2diYSJ9.UoEyXwUOhg9MIxXqYTod-A';
+  "pk.eyJ1IjoianN6LW5pbmUiLCJhIjoiY20yZWc4MGNvMWg1dDJrcXc2cW5jM2diYSJ9.UoEyXwUOhg9MIxXqYTod-A";
 
-const mapStyle: string = 'mapbox://styles/jsz-nine/cm2ek9r24004h01pgfiltcedg';
+const mapStyle: string = "mapbox://styles/jsz-nine/cm2ek9r24004h01pgfiltcedg";
 
 const defaultLocation: MapLocation = {
   lng: 12.585646,
@@ -16,9 +16,20 @@ const defaultLocation: MapLocation = {
   zoom: 12,
 };
 
+const mapContainer = useTemplateRef("map-container");
 const location = ref<MapLocation>(defaultLocation);
-const mapContainer = useTemplateRef('map-container');
 const map = ref<Map | undefined>();
+
+onMounted(() => {
+  map.value = new mapboxgl.Map({
+    container: mapContainer.value as HTMLDivElement,
+    style: mapStyle,
+    center: [location.value.lng, location.value.lat],
+    zoom: location.value.zoom,
+    bearing: location.value.bearing,
+    pitch: location.value.pitch,
+  });
+});
 
 function getLocation(): MapLocation | undefined {
   if (map.value) {
@@ -38,20 +49,32 @@ function updateLocation(): void {
   }
 }
 
-onMounted(() => {
-  map.value = new mapboxgl.Map({
-    container: mapContainer.value as HTMLDivElement,
-    style: mapStyle,
-    center: [location.value.lng, location.value.lat],
-    zoom: location.value.zoom,
-    bearing: location.value.bearing,
-    pitch: location.value.pitch,
-  });
+map.value?.on("move", updateLocation);
+map.value?.on("zoom", updateLocation);
+map.value?.on("rotate", updateLocation);
+map.value?.on("pitch", updateLocation);
 
-  map.value.on('move', updateLocation);
-  map.value.on('zoom', updateLocation);
-  map.value.on('rotate', updateLocation);
-  map.value.on('pitch', updateLocation);
+map.value?.on("click", (event: MapMouseEvent) => {
+  console.log(event.point);
+  // If the user clicked on one of your markers, get its information.
+  const features: GeoJSONFeature[] =
+    map.value?.queryRenderedFeatures(event.point, {
+      layers: ["YOUR_LAYER_NAME"], // replace with your layer name
+    }) ?? [];
+  if (!features.length) {
+    return;
+  }
+  const feature = features[0];
+
+  if (map.value) {
+    const popup = new mapboxgl.Popup({ offset: [0, -15] })
+      .setLngLat(feature.geometry?.coordinates)
+      .setHTML(
+        `<h3>${feature.properties?.title}</h3><p>${feature.properties?.description}</p>`,
+      )
+      .addTo(map.value);
+    console.log(popup);
+  }
 });
 
 watch(location, (newVal) => {

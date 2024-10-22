@@ -1,7 +1,7 @@
 :root {
   --white: #ffffff;
   --black: #141414;
-  --green: #25FFBE;
+  --green: #25ffbe;
 }
 
 *,
@@ -23,6 +23,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: Georgia, sans-serif;
 }
