@@ -16,6 +16,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@types/mapbox-gl": "^3.4.0",
     "mapbox-gl": "^3.7.0",
     "pinia": "^2.2.4",
     "vue": "^3.5.12",

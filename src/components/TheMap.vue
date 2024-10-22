@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue';
-import mapboxgl from 'mapbox-gl';
+import { onMounted, ref, useTemplateRef, watch } from 'vue';
+import mapboxgl, { Map } from 'mapbox-gl';
 import { type MapLocation } from '@/utils/types';
-import '../../node_modules/mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoianN6LW5pbmUiLCJhIjoiY20yZWc4MGNvMWg1dDJrcXc2cW5jM2diYSJ9.UoEyXwUOhg9MIxXqYTod-A';
 
-const defaultLocation = {
+const mapStyle: string = 'mapbox://styles/jsz-nine/cm2ek9r24004h01pgfiltcedg';
+
+const defaultLocation: MapLocation = {
   lng: 12.585646,
   lat: 55.681055,
   bearing: 0,
@@ -15,27 +16,32 @@ const defaultLocation = {
   zoom: 12,
 };
 
-const map = ref();
 const location = ref<MapLocation>(defaultLocation);
 const mapContainer = useTemplateRef('map-container');
+const map = ref<Map | undefined>();
 
-function getLocation() {
-  return {
-    ...map.value.getCenter(),
-    bearing: map.value.getBearing(),
-    pitch: map.value.getPitch(),
-    zoom: map.value.getZoom(),
-  };
+function getLocation(): MapLocation | undefined {
+  if (map.value) {
+    return {
+      ...map.value?.getCenter(),
+      bearing: map.value?.getBearing(),
+      pitch: map.value?.getPitch(),
+      zoom: map.value?.getZoom(),
+    };
+  }
 }
 
-function updateLocation() {
-  location.value = getLocation();
+function updateLocation(): void {
+  const newLocation: MapLocation | undefined = getLocation();
+  if (newLocation) {
+    location.value = newLocation;
+  }
 }
 
 onMounted(() => {
   map.value = new mapboxgl.Map({
     container: mapContainer.value as HTMLDivElement,
-    style: 'mapbox://styles/jsz-nine/cm2ek9r24004h01pgfiltcedg',
+    style: mapStyle,
     center: [location.value.lng, location.value.lat],
     zoom: location.value.zoom,
     bearing: location.value.bearing,
@@ -48,18 +54,13 @@ onMounted(() => {
   map.value.on('pitch', updateLocation);
 });
 
-onUnmounted(() => {
-  map.value.remove();
-  map.value = null;
-});
-
 watch(location, (newVal) => {
-  const curr = getLocation();
-  if (curr.lng != newVal.lng || curr.lat != newVal.lat)
-    map.value.setCenter({ lng: newVal.lng, lat: newVal.lat });
-  if (curr.pitch != newVal.pitch) map.value.setPitch(newVal.pitch);
-  if (curr.bearing != newVal.bearing) map.value.setBearing(newVal.bearing);
-  if (curr.zoom != newVal.zoom) map.value.setZoom(newVal.zoom);
+  const curr: MapLocation | undefined = getLocation();
+  if (curr?.lng != newVal.lng || curr?.lat != newVal.lat)
+    map.value?.setCenter({ lng: newVal.lng, lat: newVal.lat });
+  if (curr?.pitch != newVal.pitch) map.value?.setPitch(newVal.pitch);
+  if (curr?.bearing != newVal.bearing) map.value?.setBearing(newVal.bearing);
+  if (curr?.zoom != newVal.zoom) map.value?.setZoom(newVal.zoom);
 });
 </script>
 
@@ -73,3 +74,5 @@ watch(location, (newVal) => {
     <div ref="map-container" class="nine-map" />
   </div>
 </template>
+
+<style src="../node_modules/mapbox-gl/dist/mapbox-gl.css" lang="css"></style>
